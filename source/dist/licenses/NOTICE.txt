@@ -1,0 +1,21 @@
+Whetstone 1.1.0
+
+Application interface, tiled inference pipeline, bilateral filter, and local
+launcher: Copyright (c) 2026 Whetstone contributors; MIT License.
+
+SCUNet: Practical Blind Image Denoising via Swin-Conv-UNet and Data Synthesis.
+Kai Zhang, Yawei Li, Jingyun Liang, Jiezhang Cao, Yulun Zhang, Hao Tang,
+Deng-Ping Fan, Radu Timofte, Luc Van Gool. Machine Intelligence Research 2023.
+Original repository: https://github.com/cszn/SCUNet
+Apache License, Version 2.0. Weights are unmodified.
+
+ONNX conversion: Heliosoph/scunet-onnx on Hugging Face.
+The supplied license and model card are retained separately.
+
+ONNX Runtime Web 1.24.3: Microsoft Corporation. MIT License.
+Go runtime and standard library: The Go Authors. BSD 3-clause license.
+
+No implementation code or visual assets from denoise.pro, imgmend.com,
+Teamzlab or Callculation are included in this distribution.
+
+Desktop host: go-webview2 and go-winloader, with the embedded Microsoft WebView2 SDK loader. License texts are included.

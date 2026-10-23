@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#14121b"><title>磨石 · Whetstone</title><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><a class="brand" href="./"><span class="brand-icon">◈</span><span>磨石 <small>WHETSTONE</small></span></a><span class="local"><i></i> 本機處理 · 離線可用</span><button id="install" hidden>安裝應用程式</button><button id="helpBtn" class="ghost" aria-label="使用說明">使用說明 ↗</button></header>
+<main>
+<section class="intro"><div><p class="eyebrow">LESS GRAIN. MORE IMAGE.</p><h1>讓雜訊安靜，<em>讓畫面留下。</em></h1><p>先去顆粒，再清掉低對比髒紋。可調清理力度與範圍，保留原始尺寸。</p></div><span class="version">v1.1.0<br>LOCAL EDITION</span></section>
+<div class="workspace">
+<aside class="panel controls">
+<div class="section-title"><span>01</span><h2>放進圖片</h2></div>
+<button id="choose" class="drop"><span class="upload-icon">＋</span><strong>點選或拖曳圖片</strong><small>PNG · JPG · WebP<br>也可以 Ctrl + V 貼上圖片</small></button><input type="file" id="file" accept="image/png,image/jpeg,image/webp" hidden>
+<p id="fileInfo" class="file-info">圖片只留在這台裝置，不會上傳。</p>
+<div class="section-title second"><span>02</span><h2>選擇清理方式</h2></div>
+<div class="modes"><button class="mode selected" data-mode="ai" aria-pressed="true"><strong>AI 細緻降噪 <span>SCUNet</span></strong><small>模型降噪後，可再加一道保邊去紋理</small></button><button class="mode" data-mode="smooth" aria-pressed="false"><strong>強力去紋理 <span>免模型</span></strong><small>清理較大片的細髒紋與斑駁，可調範圍</small></button></div>
+<div id="aiSettings"><label class="field">運算方式<select id="backend"><option value="auto">自動 · 優先使用顯示卡</option><option value="cpu">CPU · 相容模式</option></select></label></div>
+<div id="fastSettings" hidden><label class="field">清理程度 <output id="noiseValue">18</output><input type="range" id="noise" min="5" max="50" value="18"></label></div>
+<div class="texture-settings"><label class="field">去紋理力度 <output id="textureValue">60</output><input type="range" id="texture" min="0" max="100" value="60" aria-label="去紋理力度"><small>設為 0 可只用 AI。同張、同範圍會重用 AI 結果，加快調整。</small></label><label class="field">清理範圍 <output id="radiusValue">8 px</output><input type="range" id="radius" min="1" max="24" value="8" aria-label="清理範圍"><small>小範圍處理細顆粒；大範圍處理較粗的髒紋。</small></label></div>
+<label class="field mix-label">效果混合 <output id="mixValue">100%</output><input type="range" id="mix" min="0" max="100" value="100"><small>降低比例可保留更多原本的筆觸與紋理；不必重新運算。</small></label>
+<div class="actions"><button id="preview" disabled>先看局部</button><button id="run" class="primary" disabled>清理整張圖片 <span>↗</span></button></div><button id="cancel" class="danger" hidden>停止處理</button>
+<div class="status" role="status" aria-live="polite"><span id="statusText">準備好了，放一張圖片進來吧。</span><progress id="progress" value="0" max="100" hidden></progress></div>
+<div class="hint"><span>✦</span><p>建議先試局部：細顆粒用 2～6 px，斑駁髒紋用 8～16 px。力度高時，髮絲與筆觸也會減少。</p></div>
+</aside>
+<section class="panel stage-panel">
+<div class="stage-toolbar"><div class="segmented" role="group" aria-label="檢視模式"><button data-view="compare" class="active">滑動對照</button><button data-view="before">原圖</button><button data-view="after">清理後</button></div><div class="zoom-tools"><button id="fit" class="ghost">適合視窗</button><button id="actual" class="ghost">100%</button></div></div>
+<div class="viewer" id="viewer"><div class="empty" id="empty"><div class="sample-art"><span class="orbit"></span><span class="mountain"></span><span class="sun"></span><span class="grain"></span></div><h2>漂亮的畫面，不需要滿身顆粒。</h2><p>從左側加入圖片，或先用範例試試看。</p><button id="demo" class="soft">試用內建範例 <span>↗</span></button></div><canvas id="display" hidden aria-label="圖片前後對照，可點選局部預覽位置"></canvas><div class="viewer-labels" id="viewerLabels" hidden><span>原圖</span><span>清理後</span></div><div id="splitLine" hidden><span>‹ ›</span></div><div id="cropBadge" hidden>局部預覽 · 不代表已完成整張</div></div>
+<div class="comparison-control"><span>原圖</span><input type="range" id="split" min="0" max="100" value="50" aria-label="前後對照分界"><span>清理後</span></div>
+<div class="stage-meta"><span id="dimensions">保留原始尺寸 · 保留透明度</span><span id="engine">尚未處理</span></div>
+<div class="export"><div><h2>把清理後的畫面帶走。</h2><p id="exportHint">完成整張處理後即可匯出，不加浮水印。</p></div><div class="export-controls"><select id="format" aria-label="輸出格式"><option value="image/png">PNG · 無損 / 透明</option><option value="image/webp">WebP · 較小檔案</option><option value="image/jpeg">JPG · 白色背景</option></select><button id="save" class="primary" disabled>下載圖片 ↓</button></div></div>
+</section>
+</div>
+<footer><span>你的圖片，你的電腦。沒有帳號、沒有點數、沒有張數限制。</span><span>SCUNet + ONNX Runtime · 獨立製作</span></footer>
+</main>
+<dialog id="help"><div class="dialog-head"><h2>讓畫面乾淨一點，就好。</h2><button id="closeHelp" class="ghost" aria-label="關閉說明">✕</button></div><ol><li>放入 PNG、JPG 或 WebP，也能貼上剪貼簿圖片。</li><li>使用「先看局部」測試效果。點圖片可改變局部中心位置。</li><li>先調「去紋理力度」和「清理範圍」，重新試看局部；完成後可即時調整「效果混合」。</li><li>按「清理整張圖片」，完成後選格式下載。</li></ol><p>AI 模型已隨程式附帶，使用時無須連網。第一次初始化需要時間；CPU 處理大圖可能花數分鐘，進度會在每一塊完成後更新。可隨時停止。</p><p>這是降噪工具，不會修正錯誤手指、文字、構圖或大範圍重複花紋，也無法保證完全保留細筆觸。強力去紋理使用傳統自引導保邊平滑，並非另一個 AI 模型。AI 模式可先跑 SCUNet，再接這道平滑。</p><p>輸出保留像素尺寸及 PNG / WebP 透明度；JPG 會以白色補底。匯出採用瀏覽器 sRGB 畫布，不保留 EXIF、ICC、HDR 或動畫。單張上限為 1,600 萬像素。改變清理力度或範圍後需要重新處理；同張、同範圍會重用已完成的 AI 結果。效果混合可即時調整。</p><p>Windows 桌面版直接開啟獨立視窗，使用系統 WebView2 Runtime。關閉程式視窗即結束，不需要另外開啟瀏覽器或保留黑色視窗。需要已安裝微軟 WebView2 Runtime；缺少時會顯示提示，不會自動安裝。</p><p>PWA 版部署在 HTTPS 後可安裝；第一次開啟後按下方按鈕，將模型完整存入離線快取。瀏覽器清理網站資料後需重新快取。</p><button id="cacheOffline">準備 PWA 離線資料（約 117 MB）</button><p id="cacheStatus" role="status"></p><p class="fine">磨石 v1.1.0 · 自製介面與處理流程。SCUNet 原作者 Kai Zhang 等；ONNX 轉換 Heliosoph。授權與完整原始碼見下載套件。</p></dialog>
+<script src="app.js" defer></script>
+</body></html>

@@ -1,0 +1,8 @@
+'use strict';
+const CACHE='whetstone-v1.1.0';
+const SHELL=['./','index.html','style.css','app.js','worker.js','smooth.js','manifest.webmanifest','icon-192.png','icon-512.png'];
+const AI=['vendor/ort.all.min.js','vendor/ort-wasm-simd-threaded.jsep.mjs','vendor/ort-wasm-simd-threaded.jsep.wasm','vendor/ort-wasm-simd-threaded.mjs','vendor/ort-wasm-simd-threaded.wasm','models/scunet_color_real_psnr.onnx','models/scunet_color_real_psnr.onnx.data'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('whetstone-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;e.respondWith(caches.open(CACHE).then(async cache=>{const old=await cache.match(e.request);if(old)return old;const res=await fetch(e.request);if(res.ok)await cache.put(e.request,res.clone()).catch(()=>{});return res;}));});
+self.addEventListener('message',e=>{if(e.data.type!=='cache-model')return;const port=e.ports[0];e.waitUntil((async()=>{try{const cache=await caches.open(CACHE);for(let i=0;i<AI.length;i++){port.postMessage({text:`正在準備離線資料 ${i+1} / ${AI.length}…`});const path=new URL(AI[i],self.registration.scope).href;if(!(await cache.match(path))){const res=await fetch(path);if(!res.ok)throw new Error('無法讀取 '+AI[i]);await cache.put(path,res);}}port.postMessage({done:true,text:'離線資料已備妥。之後可在無網路時使用；清除網站資料會移除快取。'});}catch(err){port.postMessage({error:true,text:'離線快取失敗：'+err.message});}})());});
